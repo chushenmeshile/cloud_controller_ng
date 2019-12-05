@@ -78,11 +78,16 @@ module VCAP::CloudController
           source_guid = process.guid
         end
 
-        @logstats_client.container_metrics(
-          source_guid: source_guid,
-          auth_token: VCAP::CloudController::SecurityContext.auth_token,
-          logcache_filter: filter
-        )
+        [
+         ::TrafficController::Models::Envelope.new(
+           origin:          'temporary-fake-metrics-source',
+           eventType:       ::TrafficController::Models::Envelope::EventType::ContainerMetric,
+           containerMetric: ::TrafficController::Models::ContainerMetric.new(
+             instanceIndex: 0,
+           ),
+           tags: [::TrafficController::Models::Envelope::TagsEntry.new(key: 'process_id', value: process.guid)],
+         ),
+        ]
       end
 
       attr_reader :bbs_instances_client
