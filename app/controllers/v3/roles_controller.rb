@@ -160,14 +160,14 @@ class RolesController < ApplicationController
   end
 
   def readable_users
-    User.readable_users_for_current_user(permission_queryer.can_read_globally?, current_user)
+    current_user.readable_users_for_current_user(permission_queryer.can_read_globally?)
   end
 
   def readable_roles
-    visible_user_ids = readable_users.select(:id)
-
-    roles_for_visible_users = Role.where(user_id: visible_user_ids)
-    roles_in_visible_spaces = roles_for_visible_users.filter(space_id: visible_space_ids)
+    # visible_user_ids = readable_users.select(:id)
+    #
+    # roles_for_visible_users = Role.where(user_id: visible_user_ids)
+    roles_in_visible_spaces = Role.filter(space_id: visible_space_ids)
     roles_in_visible_orgs = roles_for_visible_users.filter(organization_id: visible_org_ids)
 
     roles_in_visible_spaces.union(roles_in_visible_orgs)
