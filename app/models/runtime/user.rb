@@ -184,14 +184,6 @@ module VCAP::CloudController
     end
 
     def visible_users_in_my_orgs
-      # visible_user_ids = readable_users.select(:id)
-      #
-      # roles_for_visible_users = Role.where(user_id: visible_user_ids)
-      # roles_in_visible_spaces = roles_for_visible_users.filter(space_id: visible_space_ids)
-      # roles_in_visible_orgs = roles_for_visible_users.filter(organization_id: visible_org_ids)
-      #
-      # roles_in_visible_spaces.union(roles_in_visible_orgs)
-      #
       User.join(:organizations_users, user_id: :id).select(:id).where(organization_id: membership_organizations).
         union(
           User.join(:organizations_auditors, user_id: :id).select(:id).where(organization_id: membership_organizations)
@@ -205,7 +197,7 @@ module VCAP::CloudController
         distinct
     end
 
-    def readable_users_for_current_user(can_read_globally)
+    def readable_users(can_read_globally)
       if can_read_globally
         User.dataset
       else
@@ -213,7 +205,6 @@ module VCAP::CloudController
         User.where(id: readable_users)
       end
     end
-
 
     def self.uaa_users_info(user_guids)
       uaa_client = CloudController::DependencyLocator.instance.uaa_client
