@@ -78,7 +78,7 @@ module VCAP::CloudController
           expect(build_create).not_to have_received(:create_and_stage_without_event)
         end
 
-        describe 'handling BuildCreate errors' do
+        context 'handling BuildCreate errors' do
           let(:process) { ProcessModelFactory.make }
 
           context 'when BuildError error is raised' do
@@ -133,6 +133,43 @@ module VCAP::CloudController
                 expect(err.details.name).to eq('AppInvalid')
               end
             end
+          end
+        end
+
+        context 'telemetry' do
+          let(:user_audit_info) do
+            UserAuditInfo.new(
+              user_email: 'my@email.com',
+              user_name:  'user name',
+              user_guid:  'userguid'
+            )
+          end
+
+          before do
+            allow(UserAuditInfo).to receive(:from_context).and_return(user_audit_info)
+          end
+          it 'logs build creates' do
+            Timecop.freeze do
+              process = ProcessModel.make(memory: 765, disk_quota: 1234)
+              PackageModel.make(app: process.app, state: PackageModel::READY_STATE)
+
+              action.stage(process)
+
+              expected_json = {
+                'telemetry-source' => 'cloud_controller_ng',
+                'telemetry-time' => Time.now.to_datetime.rfc3339,
+                'create-build' => {
+                  'api-version' => 'v2',
+                  'lifecycle' =>  'buildpack',
+                  'buildpacks' =>  ['http://github.com/myorg/awesome-buildpack'],
+                  'stack' =>  'cflinuxfs3',
+                  'app-id' =>  Digest::SHA256.hexdigest(process.app.guid),
+                  'build-id' =>  Digest::SHA256.hexdigest(process.latest_build.guid),
+                  'user-id' =>  Digest::SHA256.hexdigest('userguid'),
+                }
+              }
+              expect(last_response.status).to eq(201), last_response.body
+              expect(logger_spy).to have_received(:info).with(JSON.generate(expected_json))
           end
         end
       end

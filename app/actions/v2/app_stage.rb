@@ -20,11 +20,13 @@ module VCAP::CloudController
         # for the staging process
         build_creator = BuildCreate.new(memory_limit_calculator: NonQuotaValidatingStagingMemoryCalculator.new)
 
-        build_creator.create_and_stage_without_event(
+        build = build_creator.create_and_stage_without_event(
           package:             process.latest_package,
           lifecycle:           lifecycle,
           start_after_staging: true
         )
+
+        #build.created_by_user_guid
 
         process.last_stager_response = build_creator.staging_response
       rescue Diego::Runner::CannotCommunicateWithDiegoError => e
