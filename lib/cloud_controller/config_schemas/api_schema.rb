@@ -58,6 +58,7 @@ module VCAP::CloudController
             level: String, # debug, info, etc.
             file: String, # Log file to use
             syslog: String, # Name to associate with syslog messages (should start with 'vcap.')
+            optional(:gdpr_compliant) => bool,
           },
 
           telemetry_log_path: String, # path to log telemetry to, /dev/null to disable
