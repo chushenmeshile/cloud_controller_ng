@@ -57,16 +57,21 @@ module VCAP::CloudController
 
     # Upload some files to the Buckets root folder (gets saved in subfolders according to first 4 letters of filename)
     root_client.cp_to_blobstore(__dir__ + '/fog_aliyun_test.rb', '016cdf95-7228-40a3-995a-cf94ce68586b')
+    root_client.cp_to_blobstore(__dir__ + '/fog_aliyun_test.rb', '016cdf95-7228-40a3-995a-cf94ce68586c')
     root_client.cp_to_blobstore(__dir__ + '/fog_aliyun_test.rb', '026cdf95-7228-40a3-995a-cf94ce68586b')
 
     # Save some file in blobstore_cache subfolder (gets saved in subfolders according to first 4 letters of filename)
-    blobstorecache_client.cp_to_blobstore(__dir__ + '/fog_aliyun_test.rb', '926cdf95-7228-40a3-995a-cf94ce68586b')
+    blobstorecache_client.cp_to_blobstore(__dir__ + '/fog_aliyun_test.rb', '926cdf95-7228-40a3-995a-cf94ce68586b/myfile')
+    blobstorecache_client.cp_to_blobstore(__dir__ + '/fog_aliyun_test.rb', '926cdf95-7228-40a3-995a-cf94ce68586b/myfile2')
+    blobstorecache_client.cp_to_blobstore(__dir__ + '/fog_aliyun_test.rb', 'abcddf95-7228-40a3-995a-cf94ce68586b/myfile')
+    blobstorecache_client.cp_to_blobstore(__dir__ + '/fog_aliyun_test.rb', 'abcddf95-7228-40a3-995a-cf94ce68586b/myfile2')
 
     # We now have following structure inside the bucket:
     # BUCKET:
     # - 01
     # |    | 6c
-    # |        | 026cdf95-7228-40a3-995a-cf94ce68586b
+    # |        | 016cdf95-7228-40a3-995a-cf94ce68586b
+    #          | 016cdf95-7228-40a3-995a-cf94ce68586c
     # - 02
     # |    | 6c
     # |        | 026cdf95-7228-40a3-995a-cf94ce68586b
@@ -74,6 +79,11 @@ module VCAP::CloudController
     # |    | 92
     # |        | 6c
     # |            | 926cdf95-7228-40a3-995a-cf94ce68586b
+    # |                 | myfile
+    # |                 | myfile2
+    # |            | abcddf95-7228-40a3-995a-cf94ce68586b
+    # |                 | myfile
+    # |                 | myfile2
 
 
     # Now just delete the file in the blobstore_cache subfolder that we uploaded previously:
