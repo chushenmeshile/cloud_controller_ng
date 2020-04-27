@@ -81,6 +81,8 @@ module VCAP::CloudController
     # |            | 926cdf95-7228-40a3-995a-cf94ce68586b
     # |                 | myfile
     # |                 | myfile2
+    # |    | ab
+    # |        | cd
     # |            | abcddf95-7228-40a3-995a-cf94ce68586b
     # |                 | myfile
     # |                 | myfile2
