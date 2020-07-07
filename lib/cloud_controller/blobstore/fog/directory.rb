@@ -1,6 +1,7 @@
 module CloudController
   module Blobstore
     class Directory
+      attr_reader :key
       def initialize(connection, key)
         @connection = connection
         @key = key

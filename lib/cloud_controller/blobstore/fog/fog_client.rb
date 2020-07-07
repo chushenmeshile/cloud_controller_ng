@@ -117,10 +117,10 @@ module CloudController
 
       def files_for(prefix, _ignored_directory_prefixes=[])
         if connection.is_a? Fog::Storage::Local::Real
-          directory = connection.directories.get(File.join(dir.key, prefix || ''))
-          directory ? directory.files : []
+          dir = connection.directories.get(File.join(dir.key, prefix || ''))
+          dir ? dir.files : []
         else
-          connection.directories.get(dir.key, prefix: prefix).files
+          connection.directories.get(directory.key, prefix: prefix).files
         end
       end
 
